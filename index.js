@@ -51,8 +51,7 @@ function init() {
             objLoader.setPath('assets/cars/');
             objLoader.load('model.obj', function (object) {
                   carObject = object;
-                  scene.add(carObject);
-                  //console.log(carObject);                  
+                  scene.add(carObject);               
             });
       });
 
@@ -60,7 +59,7 @@ function init() {
       wheelLoader.setResourcePath('assets/wheel/');
       wheelLoader.setPath('assets/wheel/');
 
-      let wheelObject_0; 
+      let wheelObject_0;
       let wheelObject_1;
       let wheelObject_2;
       let wheelObject_3;
@@ -75,12 +74,26 @@ function init() {
                   scene.add(wheelObject_0);
                   wheelObject_1 = wheelObject_0.clone();
                   scene.add(wheelObject_1);
-                  //scene.add(wheelObject_2);
-                  //scene.add(wheelObject_3);
-                  //console.log(wheelObject_0);                  
             });
       });
 
+
+      let wheelLoader_2 = new THREE.MTLLoader();
+      wheelLoader_2.setResourcePath('assets/wheel/');
+      wheelLoader_2.setPath('assets/wheel/');
+
+      wheelLoader_2.load('wheel.mtl', function (materials) {
+            materials.preload();
+            let objLoader = new THREE.OBJLoader();
+            objLoader.setMaterials(materials);
+            objLoader.setPath('assets/wheel/');
+            objLoader.load('wheel_2.obj', function (object) {
+                  wheelObject_2 = object;
+                  scene.add(wheelObject_2);
+                  wheelObject_3 = wheelObject_2.clone();
+                  scene.add(wheelObject_3);
+            });
+      });
 
 
       //scene.add(car.seat);
@@ -208,7 +221,7 @@ function init() {
       const chassisShape = new CANNON.Box(new CANNON.Vec3(0.8, 0.5, 2));
       const chassisBody = new CANNON.Body({ mass: 150 });
       chassisBody.addShape(chassisShape);
-      //chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
+      chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI );
       chassisBody.position.set(0, 2, 100);
 
       let options = {
@@ -236,19 +249,20 @@ function init() {
             indeForwardAxis: 2
       });
 
-      const axlewidth = 0.8;
+      const axlewidth = 0.7;
 
       // forward Wheels
-      options.chassisConnectionPointLocal.set(axlewidth, 0, -1.18);
+      options.chassisConnectionPointLocal.set(axlewidth, 0, -1.31);
       vehicle.addWheel(options);
 
-      options.chassisConnectionPointLocal.set(-axlewidth, 0, -1.18);
+      options.chassisConnectionPointLocal.set(-axlewidth, 0, -1.31);
       vehicle.addWheel(options);
 
-      options.chassisConnectionPointLocal.set(axlewidth, 0, 1.4);
+      // back Wheels
+      options.chassisConnectionPointLocal.set(axlewidth, 0, 1.22);
       vehicle.addWheel(options);
 
-      options.chassisConnectionPointLocal.set(-axlewidth, 0, 1.4);
+      options.chassisConnectionPointLocal.set(-axlewidth, 0, 1.22);
       vehicle.addWheel(options);
 
       vehicle.addToWorld(world);
@@ -285,7 +299,6 @@ function init() {
                   wheelBody.position.copy(t.position);
                   wheelBody.quaternion.copy(t.quaternion);
             }
-            //console.log(wheelBodies[0].position.x);
       });
 
       document.onkeydown = handler;
@@ -333,7 +346,6 @@ function init() {
                         vehicle.setSteeringValue(up ? 0 : maxSteerVal, 0);
                         vehicle.setSteeringValue(up ? 0 : maxSteerVal, 1);
                         break;
-
             }
       }
 
@@ -341,7 +353,7 @@ function init() {
             if (typeof carObject !== 'undefined') {
                   carObject.position.z = chassisBody.position.z;
                   carObject.position.y = chassisBody.position.y;
-                  carObject.position.x = chassisBody.position.x - 0.34;
+                  carObject.position.x = chassisBody.position.x;
 
                   carObject.quaternion.z = chassisBody.quaternion.z
                   carObject.quaternion.y = chassisBody.quaternion.y
@@ -353,21 +365,38 @@ function init() {
                   wheelObject_0.position.y = wheelBodies[0].position.y;
                   wheelObject_0.position.z = wheelBodies[0].position.z;
 
-                  wheelObject_0.quaternion.z = wheelBodies[0].quaternion.z
-                  wheelObject_0.quaternion.y = wheelBodies[0].quaternion.y
-                  wheelObject_0.quaternion.x = wheelBodies[0].quaternion.x
-                  wheelObject_0.quaternion.w = wheelBodies[0].quaternion.w
+                  wheelObject_0.quaternion.z = wheelBodies[0].quaternion.z;
+                  wheelObject_0.quaternion.y = wheelBodies[0].quaternion.y;
+                  wheelObject_0.quaternion.x = wheelBodies[0].quaternion.x;
+                  wheelObject_0.quaternion.w = wheelBodies[0].quaternion.w;
 
-                  wheelObject_1.position.x = wheelBodies[1].position.x;
-                  wheelObject_1.position.y = wheelBodies[1].position.y;
-                  wheelObject_1.position.z = wheelBodies[1].position.z;
+                  wheelObject_1.position.x = wheelBodies[2].position.x;
+                  wheelObject_1.position.y = wheelBodies[2].position.y;
+                  wheelObject_1.position.z = wheelBodies[2].position.z;
 
-                  wheelObject_1.quaternion.z = wheelBodies[1].quaternion.z
-                  wheelObject_1.quaternion.y = wheelBodies[1].quaternion.y
-                  wheelObject_1.quaternion.x = wheelBodies[1].quaternion.x
-                  wheelObject_1.quaternion.w = wheelBodies[1].quaternion.w                  
+                  wheelObject_1.quaternion.z = wheelBodies[2].quaternion.z;
+                  wheelObject_1.quaternion.y = wheelBodies[2].quaternion.y;
+                  wheelObject_1.quaternion.x = wheelBodies[2].quaternion.x;
+                  wheelObject_1.quaternion.w = wheelBodies[2].quaternion.w;
 
-                  //console.log(wheelBodies[0].position.x);
+                  wheelObject_2.position.x = wheelBodies[1].position.x;
+                  wheelObject_2.position.y = wheelBodies[1].position.y;
+                  wheelObject_2.position.z = wheelBodies[1].position.z;
+
+                  wheelObject_2.quaternion.z = wheelBodies[1].quaternion.z;
+                  wheelObject_2.quaternion.y = wheelBodies[1].quaternion.y;
+                  wheelObject_2.quaternion.x = wheelBodies[1].quaternion.x
+                  wheelObject_2.quaternion.w = wheelBodies[1].quaternion.w
+
+
+                  wheelObject_3.position.x = wheelBodies[3].position.x;
+                  wheelObject_3.position.y = wheelBodies[3].position.y;
+                  wheelObject_3.position.z = wheelBodies[3].position.z;
+
+                  wheelObject_3.quaternion.z = wheelBodies[3].quaternion.z;
+                  wheelObject_3.quaternion.y = wheelBodies[3].quaternion.y;
+                  wheelObject_3.quaternion.x = wheelBodies[3].quaternion.x;
+                  wheelObject_3.quaternion.w = wheelBodies[3].quaternion.w;
             }
       }
 
@@ -392,12 +421,10 @@ function init() {
             requestAnimationFrame(animate);
             stats.begin();
             world.step(1 / 60);
-
             // car
             carMovement();
-
             //itemsMovement();
-            cannonDebugRenderer.update();
+            //cannonDebugRenderer.update();
             controls.update();
             renderer.render(scene, camera);
             stats.end();
