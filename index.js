@@ -51,7 +51,7 @@ function init() {
             objLoader.setPath('assets/cars/');
             objLoader.load('model.obj', function (object) {
                   carObject = object;
-                  scene.add(carObject);               
+                  scene.add(carObject);
             });
       });
 
@@ -221,7 +221,7 @@ function init() {
       const chassisShape = new CANNON.Box(new CANNON.Vec3(0.8, 0.5, 2));
       const chassisBody = new CANNON.Body({ mass: 150 });
       chassisBody.addShape(chassisShape);
-      chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI );
+      chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI);
       chassisBody.position.set(0, 2, 100);
 
       let options = {
@@ -353,7 +353,7 @@ function init() {
             if (typeof carObject !== 'undefined') {
                   carObject.position.z = chassisBody.position.z;
                   carObject.position.y = chassisBody.position.y;
-                  carObject.position.x = chassisBody.position.x;
+                  carObject.position.x = chassisBody.position.x + 0.04;
 
                   carObject.quaternion.z = chassisBody.quaternion.z
                   carObject.quaternion.y = chassisBody.quaternion.y
