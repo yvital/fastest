@@ -367,14 +367,13 @@ function init() {
                   carObject.quaternion.x = chassisBody.quaternion.x
                   carObject.quaternion.w = chassisBody.quaternion.w
 
-                  //let pos = carObject.position.clone();
                   let pos = carObject.position.clone();
                   pos.y += 0.3;
                   camera.position.lerp(followCam.getWorldPosition(new THREE.Vector3()), 0.05);
                   camera.lookAt(pos);
 
             }
-            if (typeof wheelObject_0 !== 'undefined') {
+            if ((typeof wheelObject_0 !== 'undefined') && (typeof wheelObject_1 !== 'undefined') && (typeof wheelObject_2 !== 'undefined') && (typeof wheelObject_3 !== 'undefined'))   {
                   wheelObject_0.position.x = wheelBodies[0].position.x;
                   wheelObject_0.position.y = wheelBodies[0].position.y;
                   wheelObject_0.position.z = wheelBodies[0].position.z;
@@ -438,7 +437,7 @@ function init() {
             // car
             carMovement();
             //itemsMovement();
-            cannonDebugRenderer.update();
+            //cannonDebugRenderer.update();
             //controls.update();
             renderer.render(scene, camera);
             stats.end();
