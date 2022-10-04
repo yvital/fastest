@@ -4,12 +4,13 @@ let camera;
 let renderer;
 let scene;
 let vehicle;
+let controls;
 
 function init() {
 
       let scene = new THREE.Scene();
       // let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.5, 1000);
-      camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 8000)
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 8000)
       /*
       camera.position.z = 5;
       camera.position.y = 10
@@ -19,12 +20,11 @@ function init() {
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
 
-
-      let controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.25;
-      controls.enableZoom = true;
-
+      /*      let controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.enableZoom = true;
+      */
       let stats = new Stats();
       stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
       document.body.appendChild(stats.dom);
@@ -43,6 +43,7 @@ function init() {
       carLoader.setPath('assets/cars/');
 
       let carObject;
+      let followCam = new THREE.Object3D();
 
       carLoader.load('model.mtl', function (materials) {
             materials.preload();
@@ -50,8 +51,9 @@ function init() {
             objLoader.setMaterials(materials);
             objLoader.setPath('assets/cars/');
             objLoader.load('model.obj', function (object) {
+                  followCam.parent = object;
                   carObject = object;
-                  scene.add(carObject);
+                  scene.add(carObject);                  
             });
       });
 
@@ -96,8 +98,6 @@ function init() {
       });
 
 
-      //scene.add(car.seat);
-
       /*
       
       mtlLoader3.setResourcePath('assets/cars/');
@@ -120,7 +120,7 @@ function init() {
 
 
 
-      camera.position.set(0, 8, 140);
+      camera.position.set(0, 4, 6);
 
 
       let trackLoader = new THREE.MTLLoader();
@@ -221,8 +221,11 @@ function init() {
       const chassisShape = new CANNON.Box(new CANNON.Vec3(0.8, 0.5, 2));
       const chassisBody = new CANNON.Body({ mass: 150 });
       chassisBody.addShape(chassisShape);
-      chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI);
+      //chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI);
       chassisBody.position.set(0, 2, 100);
+
+      followCam.position.copy(camera.position);
+      scene.add(followCam);
 
       let options = {
             radius: 0.5,
@@ -249,7 +252,7 @@ function init() {
             indeForwardAxis: 2
       });
 
-      const axlewidth = 0.7;
+      const axlewidth = 0.685;
 
       // forward Wheels
       options.chassisConnectionPointLocal.set(axlewidth, 0, -1.31);
@@ -307,6 +310,7 @@ function init() {
       let maxSteerVal = 0.5;
       let maxForce = 1000;
       let brakeForce = 1000000;
+
       function handler(event) {
             let up = (event.type == 'keyup');
 
@@ -332,7 +336,7 @@ function init() {
 
                   case 66: // b
                         vehicle.setBrake(brakeForce, 0);
-                        vehicle.setBrake(brakeForce, 1);
+                        vehicle.setBrake(brakeForce, 1); pressed
                         vehicle.setBrake(brakeForce, 2);
                         vehicle.setBrake(brakeForce, 3);
                         break;
@@ -349,16 +353,26 @@ function init() {
             }
       }
 
+      //      var pressed = {};
+      //      var clock = new THREE.Clock();
+
       function carMovement() {
             if (typeof carObject !== 'undefined') {
                   carObject.position.z = chassisBody.position.z;
                   carObject.position.y = chassisBody.position.y;
-                  carObject.position.x = chassisBody.position.x + 0.04;
+                  carObject.position.x = chassisBody.position.x;
 
                   carObject.quaternion.z = chassisBody.quaternion.z
                   carObject.quaternion.y = chassisBody.quaternion.y
                   carObject.quaternion.x = chassisBody.quaternion.x
                   carObject.quaternion.w = chassisBody.quaternion.w
+
+                  //let pos = carObject.position.clone();
+                  let pos = carObject.position.clone();
+                  pos.y += 0.3;
+                  camera.position.lerp(followCam.getWorldPosition(new THREE.Vector3()), 0.05);
+                  camera.lookAt(pos);
+
             }
             if (typeof wheelObject_0 !== 'undefined') {
                   wheelObject_0.position.x = wheelBodies[0].position.x;
@@ -424,8 +438,8 @@ function init() {
             // car
             carMovement();
             //itemsMovement();
-            //cannonDebugRenderer.update();
-            controls.update();
+            cannonDebugRenderer.update();
+            //controls.update();
             renderer.render(scene, camera);
             stats.end();
       };
