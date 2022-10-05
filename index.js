@@ -6,32 +6,34 @@ let scene;
 let vehicle;
 let controls;
 let worldStep = 1 / 60;
+let controlsDisable = false;
 
 function init() {
 
-      let scene = new THREE.Scene();
+      scene = new THREE.Scene();
 
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 8000)
 
-      let renderer = new THREE.WebGLRenderer({ antialiasing: true });
+      renderer = new THREE.WebGLRenderer({ antialiasing: true });
 
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
-      /*
-      let controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.25;
-      controls.enableZoom = true;
-      */
+
+      if (controlsDisable) {
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.enableZoom = true;
+      }
       let stats = new Stats();
       stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
       document.body.appendChild(stats.dom);
 
-      const directionalLight = new THREE.DirectionalLight(0xfbe96e, 0.8);
+      let directionalLight = new THREE.DirectionalLight(0xfbe96e, 0.8);
       directionalLight.position.set(0, 20, 0);
       scene.add(directionalLight);
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+      let ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
       scene.add(ambientLight);
 
       scene.background = new THREE.Color('white');
@@ -117,8 +119,11 @@ function init() {
       */
 
 
-
-      camera.position.set(0, 3.8, 4.3);
+      if (!controlsDisable) {
+            camera.position.set(0, 3.8, 4.3);
+      } else {
+            camera.position.set(40, 24, 160);
+      }
 
 
       let trackLoader = new THREE.MTLLoader();
@@ -137,17 +142,17 @@ function init() {
       });
 
       /* Debug Geometry */
-      const geometry = new THREE.BoxGeometry(2, 2, 2);
-      //const material = new THREE.MeshBasicMaterial({ color: 0x808080, transparent: true, opacity: 0.6 });
-      const materialCube = new THREE.MeshPhongMaterial({ color: 'blue' });
-      const cube = new THREE.Mesh(geometry, materialCube);
+      let geometry = new THREE.BoxGeometry(2, 2, 2);
+      //let material = new THREE.MeshBasicMaterial({ color: 0x808080, transparent: true, opacity: 0.6 });
+      let materialCube = new THREE.MeshPhongMaterial({ color: 'blue' });
+      let cube = new THREE.Mesh(geometry, materialCube);
       cube.position.set(0, 5, 110);
       //scene.add(cube);
 
       //sphere
-      const sphereGeometry = new THREE.SphereGeometry(1, 100, 100)
-      const material2 = new THREE.MeshPhongMaterial({ color: 'green' });
-      const sphere = new THREE.Mesh(sphereGeometry, material2);
+      let sphereGeometry = new THREE.SphereGeometry(1, 100, 100)
+      let material2 = new THREE.MeshPhongMaterial({ color: 'green' });
+      let sphere = new THREE.Mesh(sphereGeometry, material2);
       sphere.castShadow = true;
       sphere.receiveShadow = true;
       //scene.add(sphere);
@@ -162,7 +167,7 @@ function init() {
       }
 
       /*CANNON */
-      const world = new CANNON.World();
+      let world = new CANNON.World();
 
       world.gravity.set(0, -9.8, 0) // Задаём гравитацию
 
@@ -171,34 +176,82 @@ function init() {
 
       //plane
 
-      const groundMaterial = new CANNON.Material();
+     
+      let groundMaterial = new CANNON.Material();
       let groundBody = new CANNON.Body({
             mass: 0,
             material: groundMaterial
-      }) //Создаём тело
+      }) 
       let groundShape = new CANNON.Plane(1000, 1000)
       groundBody.addShape(groundShape)
-      groundBody.position.set(0, 0, 0);
       groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2)
+      groundBody.position.set(0, -20, 0);
       world.addBody(groundBody)
-
-
-      const mass = 100;
-      const materialBody = new CANNON.Material();
+      
 
       // box
-      const boxShape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));
-      const boxBody = new CANNON.Body({
-            mass: mass,
+      let materialBody = new CANNON.Material();
+      let boxShape = new CANNON.Box(new CANNON.Vec3(26.5, 0.01, 12));
+      let springboardShape = new CANNON.Box(new CANNON.Vec3(2, 0.01, 4));
+
+
+      let boxBody_1 = new CANNON.Body({
+            mass: 0,
             material: materialBody
       });
-      boxBody.addShape(boxShape);
-      boxBody.position.set(5, 5, 110);
-      boxBody.linearDamping = 0.01;
-      // world.addBody(boxBody);
+      boxBody_1.addShape(boxShape);
+      boxBody_1.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI / 20);
+      boxBody_1.position.set(0, 0, 119);
+      world.addBody(boxBody_1);
+
+      let boxBody_2 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_2.addShape(boxShape);
+      boxBody_2.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 20);
+      boxBody_2.position.set(22, 0, 118.8);
+      world.addBody(boxBody_2);
+
+      let boxBody_3 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_3.addShape(boxShape);
+      boxBody_3.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 5.5);
+      boxBody_3.position.set(40, 0, 112);
+      world.addBody(boxBody_3);
+
+      let boxBody_4 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_4.addShape(boxShape);
+      boxBody_4.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
+      boxBody_4.position.set(55, 0, 85);
+      world.addBody(boxBody_4);
+
+      let boxBody_5 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_5.addShape(boxShape);
+      boxBody_5.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
+      boxBody_5.position.set(55, 0.2, 22);
+      world.addBody(boxBody_5);     
+      
+      let boxBody_6 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_6.addShape(springboardShape);
+      boxBody_6.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 13);
+      boxBody_6.position.set(50.5, 0, 61);
+      world.addBody(boxBody_6);   
 
 
       // sphere
+      /*
       let sphereBody = new CANNON.Body({
             mass: mass,
             material: materialBody
@@ -206,21 +259,22 @@ function init() {
       let sphereShape = new CANNON.Sphere(1);
       sphereBody.addShape(sphereShape);
       sphereBody.position.set(5, 8, 111.5);
-      // world.addBody(sphereBody);
+      world.addBody(sphereBody);
 
-      // const material_ground = new CANNON.ContactMaterial(groundMaterial, materialBody, { friction: 0.3, restitution: 0.1 });
-      // world.addContactMaterial(material_ground);
+      let material_ground = new CANNON.ContactMaterial(groundMaterial, materialBody, { friction: 0.3, restitution: 0.1 });
+      world.addContactMaterial(material_ground);
+      */
 
       // CannonDebugRenderer 
       let cannonDebugRenderer = new THREE.CannonDebugRenderer(scene, world) //Подцветка скелетов
 
 
       // Add cannon car
-      const chassisShape = new CANNON.Box(new CANNON.Vec3(0.8, 0.5, 2));
-      const chassisBody = new CANNON.Body({ mass: 150 });
+      let chassisShape = new CANNON.Box(new CANNON.Vec3(0.8, 0.5, 2));
+      let chassisBody = new CANNON.Body({ mass: 150 });
       chassisBody.addShape(chassisShape);
-      //chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI);
-      chassisBody.position.set(0, 2, 100);
+      chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 3 * Math.PI / 2);
+      chassisBody.position.set(0, 2, 120);
 
       followCam.position.copy(camera.position);
       scene.add(followCam);
@@ -250,7 +304,7 @@ function init() {
             indeForwardAxis: 2
       });
 
-      const axlewidth = 0.685;
+      let axlewidth = 0.685;
 
       // forward Wheels
       options.chassisConnectionPointLocal.set(axlewidth, 0, -1.31);
@@ -268,8 +322,8 @@ function init() {
 
       vehicle.addToWorld(world);
 
-      const wheelMaterial = new CANNON.Material("wheelMaterial");
-      const wheelGroundContactMaterial = new CANNON.ContactMaterial(wheelMaterial, groundMaterial, {
+      let wheelMaterial = new CANNON.Material("wheelMaterial");
+      let wheelGroundContactMaterial = new CANNON.ContactMaterial(wheelMaterial, materialBody, {
             friction: 0.3,
             restitution: 0,
             contactEquationStiffness: 1000
@@ -282,9 +336,9 @@ function init() {
       let wheelRadius = 0.31;
       for (let i = 0; i < vehicle.wheelInfos.length; i++) {
             let wheel = vehicle.wheelInfos[i];
-            const cylinderShape = new CANNON.Cylinder(wheelRadius, wheelRadius, wheelRadius / 2, 20);
-            const wheelBody = new CANNON.Body({ mass: 1, material: wheelMaterial });
-            const q = new CANNON.Quaternion();
+            let cylinderShape = new CANNON.Cylinder(wheelRadius, wheelRadius, wheelRadius / 2, 20);
+            let wheelBody = new CANNON.Body({ mass: 1, material: wheelMaterial });
+            let q = new CANNON.Quaternion();
             q.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
             wheelBody.addShape(cylinderShape, new CANNON.Vec3(), q);
             wheelBodies.push(wheelBody);
@@ -311,8 +365,6 @@ function init() {
 
       function handler(event) {
             let up = (event.type == 'keyup');
-
-            console.log(event.type);
 
             if (!up && event.type !== 'keydown') {
                   return;
@@ -349,21 +401,13 @@ function init() {
                         vehicle.setSteeringValue(up ? 0 : maxSteerVal, 1);
                         break;
             }
-
-
             if ((event.type == 'keyup')) {
                   vehicle.setBrake(brakeForce, 0);
                   vehicle.setBrake(brakeForce, 1);
                   vehicle.setBrake(brakeForce, 2);
                   vehicle.setBrake(brakeForce, 3);
             }
-
-
-
       }
-
-      //      var pressed = {};
-      //      var clock = new THREE.Clock();
 
       function carMovement() {
             if (typeof carObject !== 'undefined') {
@@ -378,9 +422,10 @@ function init() {
 
                   let pos = carObject.position.clone();
                   pos.y += 1.8;
-                  camera.position.lerp(followCam.getWorldPosition(new THREE.Vector3()), 0.4);
-
-                  camera.lookAt(pos);
+                  if (!controlsDisable) {
+                        camera.position.lerp(followCam.getWorldPosition(new THREE.Vector3()), 0.4);
+                        camera.lookAt(pos);
+                  }
 
             }
             if ((typeof wheelObject_0 !== 'undefined') && (typeof wheelObject_1 !== 'undefined') && (typeof wheelObject_2 !== 'undefined') && (typeof wheelObject_3 !== 'undefined')) {
@@ -425,9 +470,9 @@ function init() {
 
       function itemsMovement() {
             // cube
-            cube.position.z = boxBody.position.z;
-            cube.position.y = boxBody.position.y;
-            cube.position.x = boxBody.position.x;
+            cube.position.z = boxBody_1.position.z;
+            cube.position.y = boxBody_1.position.y;
+            cube.position.x = boxBody_1.position.x;
 
             // sphere
             sphere.position.z = sphereBody.position.z
@@ -447,7 +492,9 @@ function init() {
             carMovement();
             //itemsMovement();
             //cannonDebugRenderer.update();
-            //controls.update();
+            if (controlsDisable) {
+                  controls.update();
+            }
             renderer.render(scene, camera);
             stats.end();
       };
