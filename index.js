@@ -5,25 +5,23 @@ let renderer;
 let scene;
 let vehicle;
 let controls;
+let worldStep = 1 / 60;
 
 function init() {
 
       let scene = new THREE.Scene();
-      // let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.5, 1000);
+
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 8000)
-      /*
-      camera.position.z = 5;
-      camera.position.y = 10
-      */
+
       let renderer = new THREE.WebGLRenderer({ antialiasing: true });
 
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
-
-      /*      let controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.25;
-            controls.enableZoom = true;
+      /*
+      let controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.25;
+      controls.enableZoom = true;
       */
       let stats = new Stats();
       stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -53,7 +51,7 @@ function init() {
             objLoader.load('model.obj', function (object) {
                   followCam.parent = object;
                   carObject = object;
-                  scene.add(carObject);                  
+                  scene.add(carObject);
             });
       });
 
@@ -120,7 +118,7 @@ function init() {
 
 
 
-      camera.position.set(0, 4, 6);
+      camera.position.set(0, 3.8, 4.3);
 
 
       let trackLoader = new THREE.MTLLoader();
@@ -309,10 +307,12 @@ function init() {
 
       let maxSteerVal = 0.5;
       let maxForce = 1000;
-      let brakeForce = 1000000;
+      let brakeForce = 2;
 
       function handler(event) {
             let up = (event.type == 'keyup');
+
+            console.log(event.type);
 
             if (!up && event.type !== 'keydown') {
                   return;
@@ -321,9 +321,7 @@ function init() {
             vehicle.setBrake(0, 1);
             vehicle.setBrake(0, 2);
             vehicle.setBrake(0, 3);
-
             switch (event.keyCode) {
-
                   case 38: // forward
                         vehicle.applyEngineForce(up ? 0 : maxForce, 2);
                         vehicle.applyEngineForce(up ? 0 : maxForce, 3);
@@ -334,9 +332,9 @@ function init() {
                         vehicle.applyEngineForce(up ? 0 : -maxForce, 3);
                         break;
 
-                  case 66: // b
+                  case 32: // space
                         vehicle.setBrake(brakeForce, 0);
-                        vehicle.setBrake(brakeForce, 1); pressed
+                        vehicle.setBrake(brakeForce, 1);
                         vehicle.setBrake(brakeForce, 2);
                         vehicle.setBrake(brakeForce, 3);
                         break;
@@ -351,6 +349,17 @@ function init() {
                         vehicle.setSteeringValue(up ? 0 : maxSteerVal, 1);
                         break;
             }
+
+
+            if ((event.type == 'keyup')) {
+                  vehicle.setBrake(brakeForce, 0);
+                  vehicle.setBrake(brakeForce, 1);
+                  vehicle.setBrake(brakeForce, 2);
+                  vehicle.setBrake(brakeForce, 3);
+            }
+
+
+
       }
 
       //      var pressed = {};
@@ -368,12 +377,13 @@ function init() {
                   carObject.quaternion.w = chassisBody.quaternion.w
 
                   let pos = carObject.position.clone();
-                  pos.y += 0.3;
-                  camera.position.lerp(followCam.getWorldPosition(new THREE.Vector3()), 0.05);
+                  pos.y += 1.8;
+                  camera.position.lerp(followCam.getWorldPosition(new THREE.Vector3()), 0.4);
+
                   camera.lookAt(pos);
 
             }
-            if ((typeof wheelObject_0 !== 'undefined') && (typeof wheelObject_1 !== 'undefined') && (typeof wheelObject_2 !== 'undefined') && (typeof wheelObject_3 !== 'undefined'))   {
+            if ((typeof wheelObject_0 !== 'undefined') && (typeof wheelObject_1 !== 'undefined') && (typeof wheelObject_2 !== 'undefined') && (typeof wheelObject_3 !== 'undefined')) {
                   wheelObject_0.position.x = wheelBodies[0].position.x;
                   wheelObject_0.position.y = wheelBodies[0].position.y;
                   wheelObject_0.position.z = wheelBodies[0].position.z;
@@ -433,8 +443,7 @@ function init() {
       let animate = function () {
             requestAnimationFrame(animate);
             stats.begin();
-            world.step(1 / 60);
-            // car
+            world.step(worldStep);
             carMovement();
             //itemsMovement();
             //cannonDebugRenderer.update();
