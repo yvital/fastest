@@ -166,6 +166,18 @@ function init() {
             renderer.setSize(window.innerWidth, window.innerHeight);
       }
 
+      let tloader = new THREE.CubeTextureLoader();
+      tloader.setPath( 'assets/images/' );
+
+      let textureCube = tloader.load( [
+            'left.png', 'right.png',
+            'up.png', 'down.png',
+            'front.png', 'back.png'
+      ] );
+
+     scene.background = textureCube;
+
+
       /*CANNON */
       let world = new CANNON.World();
 
