@@ -12,7 +12,7 @@ function init() {
 
       scene = new THREE.Scene();
 
-      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 8000)
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 500)
 
       renderer = new THREE.WebGLRenderer({ antialiasing: true });
 
@@ -157,6 +157,36 @@ function init() {
       sphere.receiveShadow = true;
       //scene.add(sphere);
 
+      let geometryPlane = new THREE.PlaneGeometry( 250, 300 );
+      let materialPlane = new THREE.MeshBasicMaterial( {color: 'green', side: THREE.DoubleSide} );
+      let plane = new THREE.Mesh( geometryPlane, materialPlane );
+      plane.position.y = -20;
+      plane.rotation.x = Math.PI / 2;
+      scene.add( plane );
+
+      let material = new THREE.MeshBasicMaterial( {color: 0xe74802, side: THREE.DoubleSide} );
+
+      let geometryPlane_2 = new THREE.PlaneGeometry( 30, 250 );
+      let plane_2 = new THREE.Mesh( geometryPlane_2, material );
+      plane_2.rotation.z = Math.PI / 2;
+      plane_2.position.z = -150;
+      scene.add( plane_2 );
+
+      let plane_3 = plane_2.clone();
+      plane_3.position.z = 150;
+      scene.add( plane_3 );
+
+      let geometryPlane_3 = new THREE.PlaneGeometry( 300, 30 );
+      let plane_4 = new THREE.Mesh( geometryPlane_3, material );
+      plane_4.rotation.y = Math.PI / 2;
+      plane_4.position.x = -125;
+      scene.add( plane_4 );
+
+      let plane_5 = plane_4.clone();
+      plane_5.position.x = 125;
+      scene.add( plane_5 );   
+      
+      plane_2.position.y = plane_3.position.y = plane_4.position.y = plane_5.position.y = -10;
 
       window.addEventListener('resize', function () { onWindowResize(); }, false);
 
@@ -167,15 +197,15 @@ function init() {
       }
 
       let tloader = new THREE.CubeTextureLoader();
-      tloader.setPath( 'assets/images/' );
+      tloader.setPath('assets/images/');
 
-      let textureCube = tloader.load( [
+      let textureCube = tloader.load([
             'left.png', 'right.png',
             'up.png', 'down.png',
             'front.png', 'back.png'
-      ] );
+      ]);
 
-     scene.background = textureCube;
+      scene.background = textureCube;
 
 
       /*CANNON */
@@ -188,18 +218,18 @@ function init() {
 
       //plane
 
-     
+
       let groundMaterial = new CANNON.Material();
       let groundBody = new CANNON.Body({
             mass: 0,
             material: groundMaterial
-      }) 
+      })
       let groundShape = new CANNON.Plane(1000, 1000)
       groundBody.addShape(groundShape)
       groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2)
       groundBody.position.set(0, -20, 0);
       world.addBody(groundBody)
-      
+
 
       // box
       let materialBody = new CANNON.Material();
@@ -250,8 +280,8 @@ function init() {
       boxBody_5.addShape(boxShape);
       boxBody_5.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
       boxBody_5.position.set(55, 0.2, 22);
-      world.addBody(boxBody_5);     
-      
+      world.addBody(boxBody_5);
+
       let boxBody_6 = new CANNON.Body({
             mass: 0,
             material: materialBody
@@ -259,7 +289,7 @@ function init() {
       boxBody_6.addShape(springboardShape);
       boxBody_6.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 13);
       boxBody_6.position.set(50.5, 0, 61);
-      world.addBody(boxBody_6);   
+      world.addBody(boxBody_6);
 
 
       // sphere
