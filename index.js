@@ -6,7 +6,7 @@ let scene;
 let vehicle;
 let controls;
 let worldStep = 1 / 60;
-let controlsDisable = false;
+let controlsDisable = true;
 
 function init() {
 
@@ -162,6 +162,7 @@ function init() {
       let plane = new THREE.Mesh( geometryPlane, materialPlane );
       plane.position.y = -20;
       plane.rotation.x = Math.PI / 2;
+      //plane.rotation.y = Math.PI / 20;
       scene.add( plane );
 
       let material = new THREE.MeshBasicMaterial( {color: 0xe74802, side: THREE.DoubleSide} );
@@ -218,7 +219,6 @@ function init() {
 
       //plane
 
-
       let groundMaterial = new CANNON.Material();
       let groundBody = new CANNON.Body({
             mass: 0,
@@ -228,7 +228,7 @@ function init() {
       groundBody.addShape(groundShape)
       groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2)
       groundBody.position.set(0, -20, 0);
-      world.addBody(groundBody)
+      //world.addBody(groundBody)
 
 
       // box
@@ -287,9 +287,122 @@ function init() {
             material: materialBody
       });
       boxBody_6.addShape(springboardShape);
-      boxBody_6.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 13);
+      boxBody_6.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 12);
       boxBody_6.position.set(50.5, 0, 61);
       world.addBody(boxBody_6);
+
+      let boxBigShape = new CANNON.Box(new CANNON.Vec3(80, 0.01, 12));
+
+      let boxBody_7 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_7.addShape(boxBigShape);
+      boxBody_7.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
+      boxBody_7.position.set(-113, 0, -90);
+      world.addBody(boxBody_7);      
+
+
+      let boxBody_8 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_8.addShape(boxBigShape);
+      boxBody_8.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
+      boxBody_8.position.set(-113, 0, 90);
+      world.addBody(boxBody_8);      
+      
+      let boxBody_9 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_9.addShape(boxBigShape);
+      boxBody_9.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
+      boxBody_9.position.set(113, 0, 90);
+      world.addBody(boxBody_9);        
+
+      let boxBody_10 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_10.addShape(boxBigShape);
+      boxBody_10.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
+      boxBody_10.position.set(113, 0, -90);
+      world.addBody(boxBody_10);        
+
+      let boxBody_11 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_11.addShape(boxBigShape);
+      boxBody_11.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI );
+      boxBody_11.position.set(90, 0, -130);
+      world.addBody(boxBody_11); 
+
+      let boxBody_12 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_12.addShape(boxBigShape);
+      boxBody_12.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI );
+      boxBody_12.position.set(-90, 0, -130);
+      world.addBody(boxBody_12); 
+
+      let boxBody_13 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_13.addShape(boxBigShape);
+      boxBody_13.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI );
+      boxBody_13.position.set(90, 0, 137);
+      world.addBody(boxBody_13); 
+
+      let boxBody_14 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_14.addShape(boxBigShape);
+      boxBody_14.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI );
+      boxBody_14.position.set(-90, 0, 137);
+      world.addBody(boxBody_14); 
+
+      let boxBody_15 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_15.addShape(springboardShape);
+      boxBody_15.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 18);
+      boxBody_15.position.set(115, 0, 13.5);
+      world.addBody(boxBody_15);
+
+      let springboardShape_2 = new CANNON.Box(new CANNON.Vec3(4, 0.01, 2));
+
+      let boxBody_16 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_16.addShape(springboardShape_2);
+      boxBody_16.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), -Math.PI / 18);
+      boxBody_16.position.set(13.5, 0, -130.6);
+      world.addBody(boxBody_16);
+
+      let boxBody_17 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_17.addShape(springboardShape);
+      boxBody_17.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 18);
+      boxBody_17.position.set(-115, 0, -13.5);
+      world.addBody(boxBody_17);  
+
+      let boxBody_18 = new CANNON.Body({
+            mass: 0,
+            material: materialBody
+      });
+      boxBody_18.addShape(springboardShape_2);
+      boxBody_18.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), Math.PI / 18);
+      boxBody_18.position.set(-13.5, 0, 136.6);
+      world.addBody(boxBody_18);      
 
 
       // sphere
@@ -313,10 +426,11 @@ function init() {
 
       // Add cannon car
       let chassisShape = new CANNON.Box(new CANNON.Vec3(0.8, 0.5, 2));
-      let chassisBody = new CANNON.Body({ mass: 150 });
+      let chassisBody = new CANNON.Body({ mass: 350 });
       chassisBody.addShape(chassisShape);
-      chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 3 * Math.PI / 2);
-      chassisBody.position.set(0, 2, 120);
+      //chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 3 * Math.PI / 2);
+      //chassisBody.position.set(0, 2, 120);
+      chassisBody.position.set(115, 2, 140);
 
       followCam.position.copy(camera.position);
       scene.add(followCam);
@@ -403,7 +517,7 @@ function init() {
 
       let maxSteerVal = 0.5;
       let maxForce = 1000;
-      let brakeForce = 2;
+      let brakeForce = 0.8;
 
       function handler(event) {
             let up = (event.type == 'keyup');
@@ -533,7 +647,7 @@ function init() {
             world.step(worldStep);
             carMovement();
             //itemsMovement();
-            //cannonDebugRenderer.update();
+            cannonDebugRenderer.update();
             if (controlsDisable) {
                   controls.update();
             }
