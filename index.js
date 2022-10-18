@@ -6,7 +6,7 @@ let scene;
 let vehicle;
 let controls;
 let worldStep = 1 / 60;
-let controlsDisable = true;
+let controlsDisable = false;
 
 function init() {
 
@@ -43,6 +43,9 @@ function init() {
       carLoader.setPath('assets/cars/');
 
       let carObject;
+
+      let carObject2;
+
       let followCam = new THREE.Object3D();
 
       carLoader.load('model.mtl', function (materials) {
@@ -53,7 +56,9 @@ function init() {
             objLoader.load('model.obj', function (object) {
                   followCam.parent = object;
                   carObject = object;
+                  carObject2 =  carObject.clone();
                   scene.add(carObject);
+                  scene.add(carObject2);
             });
       });
 
@@ -431,6 +436,7 @@ function init() {
       //chassisBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), 3 * Math.PI / 2);
       //chassisBody.position.set(0, 2, 120);
       chassisBody.position.set(115, 2, 140);
+      
 
       followCam.position.copy(camera.position);
       scene.add(followCam);
@@ -519,6 +525,7 @@ function init() {
       let maxForce = 1000;
       let brakeForce = 0.8;
 
+      
       function handler(event) {
             let up = (event.type == 'keyup');
 
@@ -567,6 +574,8 @@ function init() {
 
       function carMovement() {
             if (typeof carObject !== 'undefined') {
+                  carObject2.position.set(112.5, 0, 139.5);
+                  carObject2.rotation.y = Math.PI;
                   carObject.position.z = chassisBody.position.z;
                   carObject.position.y = chassisBody.position.y;
                   carObject.position.x = chassisBody.position.x;
@@ -647,7 +656,7 @@ function init() {
             world.step(worldStep);
             carMovement();
             //itemsMovement();
-            cannonDebugRenderer.update();
+            //cannonDebugRenderer.update();
             if (controlsDisable) {
                   controls.update();
             }
